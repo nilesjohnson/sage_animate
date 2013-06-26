@@ -3,7 +3,7 @@ Base classes for animations with Sage
 AUTHORS
 -------
 
-* Niles Johnson (2013)
+* Niles Johnson (2013)  <http://www.nilesjohnson.net>
 
 
 LICENSE: GPLv3
@@ -66,8 +66,11 @@ An outline / suggested workflow:
   The Timeline class is for setting:
 
   -  Graphical attributes of the whole animation (resolution, frame
-  rate, etc.)
+  rate, file naming conventions, etc.)
   -  Segment options (if necessary)
+
+
+
 
 
 

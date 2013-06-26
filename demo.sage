@@ -1,11 +1,10 @@
 """
 Demonstration of the Timeline/Segment and Frame/Scene classes
 
-AUTHOR: Niles Johnson (2013)
+AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 
 #*****************************************************************************
-#        Copyright (C) 2013 Niles Johnson <http://www.nilesjohnson.net>
-#
+#                  Copyright (C) 2013 by AUTHORS
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 3 of
@@ -18,14 +17,14 @@ AUTHOR: Niles Johnson (2013)
 
 EXAMPLES:
 
-Defining a new Segment::
+Defining a new Segment: `S(n)` returns a new frame object, represented by its file name::
 
+    sage: load('demo.sage')
     sage: S = Segment('first',fade_in_bg,30)
-    sage: S(0) # S(n) returns a frame object
-    <class '__main__.DemoFrame'>
+    sage: S(0)
 
-    sage: S(0).scene().show() # view the rendered image by showing the scene
-    sage: S(29).scene().show()
+    sage: S(0).show() # view the rendered image by showing the scene
+    sage: S(29).show()
 
 Making a Timeline with multiple segments::
 
@@ -34,13 +33,30 @@ Making a Timeline with multiple segments::
     sage: T.add_segment('rotate',rotate_camera,1.5)
 
     sage: T.show_segments()
-    (0) fade in: 0 -- 14.0000000000000
+    (0) fade in: 0 -- 14
     0:00:00.000 -- 0:00:00.466
-    (1) rotate: 15.0000000000000 -- 59.0000000000000
+    (1) rotate: 15 -- 59
     0:00:00.500 -- 0:00:01.966
 
 Render a segment::
-    sage: T.render_segment(0) 
+
+    sage: T.render_segment(0)
+
+
+Frames are rendered with the parameters set by the Timeline object; these are stored in the `general_frame_settings` dictionary::
+
+    sage: T.general_frame_settings
+    {'frame_name': 'animation-frame',
+    'image_format': '.png',
+    ...
+    'resolution': (544, 306)}
+
+When values in this dictionary are updated, Frames will be rendered with the new settings.  The values can be updated directly, or with the helper functions such as `frame_name` or `resolution`::
+
+    sage: T.resolution((640,480))
+    (640, 480)
+    sage: T.frame(0).resolution()
+    (640, 480)
 
 """
 load("timeline.sage")
@@ -49,7 +65,16 @@ load("frame.sage")
 class DemoScene(Tachyon):
     """
     Demonstrating a Scene class.  Example based on twisted cubic
-    example in sage.plot.plot3d.tachyon.Tachyon
+    example in sage.plot.plot3d.tachyon.Tachyon.
+
+    EXAMPLES::
+
+        sage: g = DemoScene()
+        sage: g.show()
+        sage: g.add_planes()
+        sage: g.draw_cubic()
+        sage: g.show()
+
     """
     def __init__(self,resolution=(512,512), camera_center=(3,0.3,0), look_at=(0,0,0), raydepth=8):
         xres = resolution[0]
@@ -92,13 +117,13 @@ class DemoFrame(Frame):
     
     EXAMPLES::
 
-        sage: f = DemoFrame(camera_center=(3,.5,.3))
-        sage: s = f.scene()
-        sage: s.show()
+        sage: F = DemoFrame(camera_center=(3,.5,.3))
+        sage: g = F.scene()
+        sage: g.show()
         
     """
     def __init__(self,
-                 camera_center=(3,0.3,0),
+                 camera_center=(3,0.5,0.3),
                  plane_color=(1,1,1),
                  opacities=(1,1,.7),
                  sphere_radii=.1):
@@ -120,6 +145,9 @@ class DemoFrame(Frame):
         return S
         
 
+"""
+Some demo frame functions
+"""
 def fade_in_bg(t):
     """
     Redefine frame function on [0,1] fading background planes
