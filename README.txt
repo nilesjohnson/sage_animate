@@ -1,4 +1,4 @@
-Base classes for animations with Sage
+A framework for animations with Sage
 
 AUTHORS
 -------
