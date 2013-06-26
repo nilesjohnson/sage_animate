@@ -1,5 +1,5 @@
 """
-Generic container for frames.
+FrameContainer is a generic container for frames.
 
 AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 
@@ -15,7 +15,7 @@ AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 """
 class FrameContainer(SageObject):
     """
-    Generic container for frames; the Timeline and Segment classes are
+    A generic container for frames; the Timeline and Segment classes are
     both subclasses of FrameContainer.
 
     Set attributes which should be the same for all frames in a

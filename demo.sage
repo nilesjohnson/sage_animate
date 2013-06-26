@@ -34,16 +34,45 @@ Making a Timeline with multiple segments::
 
     sage: T.show_segments()
     (0) fade in: 0 -- 14
-    0:00:00.000 -- 0:00:00.466
+      0:00:00.000 -- 0:00:00.466
     (1) rotate: 15 -- 59
-    0:00:00.500 -- 0:00:01.966
+      0:00:00.500 -- 0:00:01.966
 
-Render a segment::
+A Timeline can also be formed by adding two Segments, or adding a Segment to a Timeline::
 
+    sage: S = Segment('first',fade_in_bg,30); S
+    Animation segment: first;  30 frames. [0 -- 29]
+    sage: P = Segment('first slow',fade_in_bg,60); P
+    Animation segment: first slow;  60 frames. [0 -- 59]
+    sage: Q = Segment('second',rotate_camera,30); Q
+    Animation segment: second;  30 frames. [0 -- 29]
+    
+    sage: T = S + P; T
+    An animation timeline with 2 segments.  Duration 0:00:03 sec.
+    sage: T.show_segments()
+    sage: T.show_segments()
+    (0) first: 0 -- 29
+      0:00:00.000 -- 0:00:00.966
+    (1) first slow: 30 -- 89
+      0:00:01.000 -- 0:00:02.966
+    sage: T += Q
+    sage: T.show_segments()
+    (0) first: 0 -- 29
+      0:00:00.000 -- 0:00:00.966
+    (1) first slow: 30 -- 89
+      0:00:01.000 -- 0:00:02.966
+    (2) second: 90 -- 119
+      0:00:03.000 -- 0:00:03.966
+
+
+Render a timeline segment with `render_segment`; use `set_verbose(1)` to show verbose output, and `set_verbose(0)` to suppress::
+
+    sage: set_verbose(1)
     sage: T.render_segment(0)
 
+You can render every kth frame with an optional argument `step_size=k`.  Frames are rendered in parallel, with the number of processes detected automatically by Sage's `parallel` decorator.
 
-Frames are rendered with the parameters set by the Timeline object; these are stored in the `general_frame_settings` dictionary::
+The rendering parameters are set by the Timeline object.  These settings are stored in the `general_frame_settings` dictionary::
 
     sage: T.general_frame_settings
     {'frame_name': 'animation-frame',
@@ -57,6 +86,8 @@ When values in this dictionary are updated, Frames will be rendered with the new
     (640, 480)
     sage: T.frame(0).resolution()
     (640, 480)
+
+Use `render_all` to render all frames in an animation Timeline.  This simply calls `render_segment` on each Segment in the Timeline.
 
 """
 load("timeline.sage")

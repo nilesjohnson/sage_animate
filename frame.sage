@@ -15,6 +15,11 @@ AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 """
 from os.path import basename
 
+class Scene(Tachyon):
+    """
+    Stores information of 3D scene.  This class is just a placeholder for your own subclasses.
+    """
+
 class Frame(SageObject):
     """
     Object to store data for Scene object
@@ -106,7 +111,3 @@ class Frame(SageObject):
     
 
 
-class Scene(Tachyon):
-    """
-    Stores information of 3D scene.  This class is just a placeholder for your own subclasses.
-    """

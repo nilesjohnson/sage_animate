@@ -121,6 +121,17 @@ class Timeline(FrameContainer):
     A Timeline object sets the rendering parameters for all of its
     constituent Segment objects.  The `render_*` methods render a
     batch of frames in parallel, using Sage's parallel decorator.
+
+    Segments can be added to a Timeline object in two ways: the
+    `add_segment` method generates a new Segment and appends it to the
+    Timeline.  An existing Segment can be added with the
+    `_append_segment_object` method or with the `+` operator (a
+    shorthand).  Segment objects themselves can be added with `+`,
+    resulting in a Timeline object containing the two Segments.
+
+    Note that `+` is neither commutative nor associative; the
+    right-hand Segment comes after the left-hand Segment or Timeline
+    in the resulting Timeline.
     """
     def __init__(self):
         FrameContainer.__init__(self) # generic frame attributes
@@ -144,7 +155,7 @@ class Timeline(FrameContainer):
         """
         print self
         """
-        msg = "An animation.  Duration %s sec."%(self.duration())
+        msg = "An animation timeline with {0} segments.  Duration {1} sec.".format(len(self._segments),self.duration())
         return msg
 
     def __add__(self,other):
