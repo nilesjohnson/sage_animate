@@ -17,6 +17,21 @@ from datetime import timedelta
 load("frame_container.sage")
 
 
+# helper function
+def timeline(segment_obj=None,**kwds):
+    """
+    Wrap the given segment object in a Timeline; if no `segment_obj`
+    given, just return empty timeline.  With optional keywords, update
+    `general_frame_settings` of this Timeline.
+    """
+    T = Timeline()
+    T.general_frame_settings.update(kwds)
+    if segment_obj is not None:
+        T._append_segment_object(segment_obj)
+    return T
+
+
+
 class Segment(FrameContainer):
     """
     Produces sequence of frames from input parameters.  frame_function
@@ -142,7 +157,7 @@ class Timeline(FrameContainer):
         self.general_frame_settings['frame_name']='animation-frame'
         self.general_frame_settings['resolution']=(544,306)
 
-        # attributes of this Timeline
+        # attributes of this Timeline;
         # each of the values in this block can be shown or set with a
         # corresponding non-underscore method
         self._segment_class = Segment
@@ -247,20 +262,6 @@ class Timeline(FrameContainer):
         """
         return timedelta(seconds=float(self.num_frames()/self.frame_rate()))
 
-    # def num_frames(self):
-    #     """
-    #     total number of frames in this animation
-    #     """
-    #     return sum(S.num_frames() for S in self._segments)
-
-    # def next_frame(self):
-    #     """
-    #     return next frame number (successor to largest frame number defined so far)
-    #     """
-    #     try:
-    #         return self._segments[-1].next_frame()
-    #     except IndexError:
-    #         return self.first_frame()
     def frame_time(self,n):
         """
         the time at which frame number n occurs (or would occur; this
@@ -314,7 +315,6 @@ class Timeline(FrameContainer):
         self._segments += (S,)
         self.last_frame(S.last_frame())
         
-
     def frame(self,n):
         """
         Return frame number n; this just tries to return S(n) for each
@@ -403,18 +403,6 @@ class Timeline(FrameContainer):
         g.save(F.file_name())
 
 
-
-def timeline(segment_obj=None,**kwds):
-    """
-    Wrap the given segment object in a Timeline; if no `segment_obj`
-    given, just return empty timeline.  With optional keywords, update
-    `general_frame_settings` of this Timeline.
-    """
-    T = Timeline()
-    T.general_frame_settings.update(kwds)
-    if segment_obj is not None:
-        T._append_segment_object(segment_obj)
-    return T
 
 
 
