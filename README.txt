@@ -60,7 +60,8 @@ to render every kth frame.
 USAGE
 ------
 
-An outline / suggested workflow:
+An outline / suggested workflow.  See demo.sage for a demonstration of
+this workflow.
 
 * Begin by designing Frame and Scene classes which draw still scenes
   for (a segment of) your animation.  They should be able to produce a
