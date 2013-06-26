@@ -17,7 +17,7 @@ from os.path import basename
 
 class Scene(Tachyon):
     """
-    Stores information of 3D scene.  This class is just a placeholder for your own subclasses.
+    Stores information of 3D scene.  This class is just a placeholder for your own Scene class.
     """
 
 class Frame(SageObject):
