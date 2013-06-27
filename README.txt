@@ -53,8 +53,12 @@ where the animator can control render parameters such as frame rate,
 resolution, and file names.  Timing details are provided to aid in
 synchronizing with prerecorded audio.  Test rendering can be done with
 the render_segment functions, optionally using the "step_size" keyword
-to render every kth frame.
+to render every kth frame for some k > 1.
 
+After the frames are rendered, use a tool such as ffmpeg to combine
+them into an animation.  Currently the Timeline class doesn't provide
+an interface to ffmpeg, so you have to run those commands separately.
+An example command is given below.
 
 
 USAGE
@@ -101,6 +105,20 @@ this workflow.
   rate, file naming conventions, etc.)
   -  Setting segment options (if necessary)
   -  Rendering many Frames
+
+* Finally, combine the rendered images into an animation with
+  something like ffmpeg.  ffmpeg is a complex and full-featured tool,
+  with somewhat sparse documentation.  Here is one example using it to
+  generate an animation from a sequence of png images and an mp3 audio
+  file:
+
+ffmpeg -y -r 30 -vcodec png -i /path/to/animation-frame%08d.png -i /path/to/audio.mp3 -t 00:02:54.3 -map 0:0 -map 1:0 -vcodec libx264 -crf 20 -threads 0 -tune animation animation-out.mp4
+
+  For details on ffmpeg, you could start with these two:
+
+  -  http://ffmpeg.org/ffmpeg.html
+
+  -  http://ffmpeg.org/trac/ffmpeg/wiki/x264EncodingGuide
 
 
 
