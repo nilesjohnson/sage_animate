@@ -76,10 +76,10 @@ this workflow.
   -  Functions which determine where to place objects, camera, light
      sources, etc.
 
-  The Frame class is for setting:
+  The Frame class is for:
 
-  -  Graphic attributes (image format, resolution, filename, etc.)
-  -  Scene options (if necessary)
+  -  Setting Scene class and its inputs
+  -  Rendering test images during development
 
   One goal should be that Frame objects are small and fast, deferring
   time- and memory-intensive calculations to Scene objects.  The
@@ -95,11 +95,12 @@ this workflow.
 
   -  Functions to produce Frames (and Scenes)
 
-  The Timeline class is for setting:
+  The Timeline class is for:
 
-  -  Graphical attributes of the whole animation (resolution, frame
+  -  Setting graphical attributes of the whole animation (resolution, frame
   rate, file naming conventions, etc.)
-  -  Segment options (if necessary)
+  -  Setting segment options (if necessary)
+  -  Rendering many Frames
 
 
 
