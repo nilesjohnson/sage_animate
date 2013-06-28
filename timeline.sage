@@ -289,7 +289,7 @@ class Timeline(FrameContainer):
             print "({2}) {3}: {0} -- {1}".format(ff,lf,i,S.name())
             print "  %s -- %s"%(self.frame_time(ff),self.frame_time(lf))
 
-    def add_segment(self, name, frame_function, duration):
+    def add_segment(self, name, frame_function, duration, **kwds):
         """
         Add new segment using self.segment_class; number of frames is
         computed from `frame_rate`, rounded to nearest integer.
@@ -298,7 +298,8 @@ class Timeline(FrameContainer):
         segment_class = self.segment_class()
         S = segment_class(name=name, 
                           frame_function=frame_function,
-                          num_frames=num_frames)
+                          num_frames=num_frames,
+                          **kwds)
         self._append_segment_object(S)
 
     def _append_segment_object(self,S):
