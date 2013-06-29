@@ -15,6 +15,11 @@ AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 """
 from datetime import timedelta
 load("frame_container.sage")
+try:
+    print "using {0} cpus for parallel rendering".format(NCPUS)
+except NameError:    
+    NCPUS = sage.parallel.ncpus.ncpus()
+    print "using {0} cpus for parallel rendering".format(NCPUS)
 
 
 # helper function
@@ -387,7 +392,7 @@ class Timeline(FrameContainer):
             g = self.frame(F).scene(*args,**kwds)
         g.show()
 
-    @parallel
+    @parallel(ncpus=NCPUS)
     def save_frame(self,F,*args,**kwds):
         """
         Save image of frame object F.  If F is an integer, get frame number F from
