@@ -14,7 +14,14 @@ AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 
 """
 from datetime import timedelta
+from itertools import chain
+
 load("frame_container.sage")
+try:
+    print "using {0} cpus for parallel rendering".format(NCPUS)
+except NameError:    
+    NCPUS = sage.parallel.ncpus.ncpus()
+    print "using {0} cpus for parallel rendering".format(NCPUS)
 
 
 # helper function
@@ -97,6 +104,11 @@ class Segment(FrameContainer):
     #     return self(n)
 
     # show or set attributes
+    def frames_generator(self,step_size=1):
+        """
+        Generator for frames in this segment
+        """
+        return (self(n) for n in self.frame_range()[::step_size])
     def name(self,val=None):
         """
         show or set self._name
@@ -268,9 +280,8 @@ class Timeline(FrameContainer):
         function does not verify that n is one of the frame numbers of
         this animation)
         """
-        from datetime import timedelta as tdelta
         d = (n - self.first_frame())/self.frame_rate()
-        hms = tdelta(seconds=int(d))
+        hms = timedelta(seconds=int(d))
         return str(hms)+'.%03d'%(1000*(d-int(d))) #just show seconds to two decimal places
     
     def segment(self,i):
@@ -289,7 +300,7 @@ class Timeline(FrameContainer):
             print "({2}) {3}: {0} -- {1}".format(ff,lf,i,S.name())
             print "  %s -- %s"%(self.frame_time(ff),self.frame_time(lf))
 
-    def add_segment(self, name, frame_function, duration):
+    def add_segment(self, name, frame_function, duration, **kwds):
         """
         Add new segment using self.segment_class; number of frames is
         computed from `frame_rate`, rounded to nearest integer.
@@ -298,7 +309,8 @@ class Timeline(FrameContainer):
         segment_class = self.segment_class()
         S = segment_class(name=name, 
                           frame_function=frame_function,
-                          num_frames=num_frames)
+                          num_frames=num_frames,
+                          **kwds)
         self._append_segment_object(S)
 
     def _append_segment_object(self,S):
@@ -346,10 +358,20 @@ class Timeline(FrameContainer):
         print "saving to {0}".format(self.out_dir())
         frames = (S(n) for n in frame_numbers) 
         to_render = self.save_frame(frames) # uses generator instead of list
+        i = 0
         for x in to_render:
-            verbose("  ..finished frame {0}".format(x[0][0][0]))
-        print "Finished with segment: '{1}'! Frames in {0}".format(self.out_dir(),S.name())
+            i += 1
+            #verbose("  ..finished frame {0}".format(x[0][0][0]))
+            print("  ..finished frame {0}".format(x[0][0][0])) #verbose broken for more than 15 parallel processes
         return None
+
+    def all_frames(self,step_size=1):
+        """
+        generator for all frames in this animation
+        """
+        seg_frames = (S.frames_generator(step_size=step_size) for S in self._segments)
+        return chain(*seg_frames)
+            
 
     def render_frames(self,frame_range):
         """
@@ -367,10 +389,16 @@ class Timeline(FrameContainer):
         """
         Render all frames of this animation, passing keywords to `render_segment`
         """
-        for i,S in enumerate(self._segments):
-            verbose("Rendering segment ({0}) '{1}'".format(i,S.name()))
-            self.render_segment(i,**kwds)
-        print "Finished with all segments! Frames in {0}".format(self.out_dir())
+        print "rendering {0} frames".format(self.num_frames())
+        print "saving to {0}".format(self.out_dir())
+        frames = self.all_frames(**kwds)
+        to_render = self.save_frame(list(frames)) # uses generator instead of list
+        for x in to_render:
+            pass
+            #verbose("  ..finished frame {0}".format(x[0][0][0]))
+            #print("  ..finished frame {0}".format(x[0][0][0])) #verbose broken for more than 15 parallel processes
+        
+        print "Finished with all frames! Frames in {0}".format(self.out_dir())
 
     def show_frame(self,F,*args,**kwds):
         """
@@ -386,7 +414,9 @@ class Timeline(FrameContainer):
             g = self.frame(F).scene(*args,**kwds)
         g.show()
 
-    @parallel
+    def presave(self,*args,**kwds):
+        pass
+    @parallel(ncpus=NCPUS)
     def save_frame(self,F,*args,**kwds):
         """
         Save image of frame object F.  If F is an integer, get frame number F from
@@ -394,6 +424,7 @@ class Timeline(FrameContainer):
 
         args and kwds are passed to Scene object
         """
+        self.presave(F,*args,**kwds)
         verbose('saving frame image..')
         try:
             g = F.scene(*args,**kwds)
