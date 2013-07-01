@@ -13,6 +13,8 @@ AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 #*****************************************************************************
 
 """
+from sage.all_cmdline import *   # import sage library
+
 from os.path import basename
 
 class Scene(Tachyon):

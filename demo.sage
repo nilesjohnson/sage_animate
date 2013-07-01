@@ -16,9 +16,6 @@ AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 We begin with demo Scene and Frame classes.
 """
 
-load("timeline.sage")
-load("frame.sage")
-
 class DemoScene(Tachyon):
     """
     Demonstrating a Scene class.  Example based on twisted cubic
@@ -68,6 +65,7 @@ class DemoScene(Tachyon):
             self.sphere((i,i^2 - 0.5,i^3), sphere_radii, 't%s'%(k%3))
 
 
+from frame import Frame
 class DemoFrame(Frame):
     """
     Demonstrating subclass of Frame class.  We add some custom
@@ -129,11 +127,14 @@ def rotate_camera(t):
 
 
 """
-Now we demonstrate using the new classes with the Segment and Timeline classes:
+Now we demonstrate using the new classes with the Segment and Timeline classes::
+
+
 
 Defining a new Segment: `S(n)` returns a new frame object, represented by its file name::
 
     sage: load('demo.sage')
+    sage: from timeline import Segment
     sage: S = Segment('first',fade_in_bg,30)
     sage: S(0)
 
@@ -142,6 +143,7 @@ Defining a new Segment: `S(n)` returns a new frame object, represented by its fi
 
 Making a Timeline with multiple segments::
 
+    sage: from timeline import Timeline
     sage: T = Timeline()
     sage: T.add_segment('fade in',fade_in_bg,.5)
     sage: T.add_segment('rotate',rotate_camera,1.5)
