@@ -20,13 +20,6 @@ from itertools import chain
 
 from frame_container import FrameContainer
 
-try:
-    print "using {0} cpus for parallel rendering".format(NCPUS)
-except NameError:    
-    NCPUS = sage.parallel.ncpus.ncpus()
-    print "using {0} cpus for parallel rendering".format(NCPUS)
-
-
 # helper function
 def timeline(segment_obj=None,**kwds):
     """
@@ -269,7 +262,13 @@ class Timeline(FrameContainer):
         if val is not None:
             self._high_quality = val
         return self._high_quality
-
+    def ncpus(self,val=None):
+        """
+        Show or set self._ncpus
+        """
+        if val is not None:
+            self.save_frame.parallel.p_iter.ncpus = val
+        return self.save_frame.parallel.p_iter.ncpus
 
     def duration(self):
         """
@@ -361,11 +360,8 @@ class Timeline(FrameContainer):
         print "saving to {0}".format(self.out_dir())
         frames = (S(n) for n in frame_numbers) 
         to_render = self.save_frame(frames) # uses generator instead of list
-        i = 0
         for x in to_render:
-            i += 1
             verbose("  ..finished frame {0}".format(x[0][0][0]))
-            #print("  ..finished frame {0}".format(x[0][0][0])) #verbose broken for more than 15 parallel processes
         return None
 
     def all_frames(self,step_size=1):
@@ -397,9 +393,7 @@ class Timeline(FrameContainer):
         frames = self.all_frames(**kwds)
         to_render = self.save_frame(list(frames)) # uses generator instead of list
         for x in to_render:
-            pass
-            #verbose("  ..finished frame {0}".format(x[0][0][0]))
-            #print("  ..finished frame {0}".format(x[0][0][0])) #verbose broken for more than 15 parallel processes
+            verbose("  ..finished frame {0}".format(x[0][0][0]))
         
         print "Finished with all frames! Frames in {0}".format(self.out_dir())
 
@@ -419,7 +413,7 @@ class Timeline(FrameContainer):
 
     def presave(self,*args,**kwds):
         pass
-    @parallel(ncpus=NCPUS)
+    @parallel
     def save_frame(self,F,*args,**kwds):
         """
         Save image of frame object F.  If F is an integer, get frame number F from
