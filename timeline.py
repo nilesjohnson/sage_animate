@@ -361,7 +361,7 @@ class Timeline(FrameContainer):
         frames = (S(n) for n in frame_numbers) 
         to_render = self.save_frame(frames) # uses generator instead of list
         for x in to_render:
-            verbose("  ..finished frame {0}".format(x[0][0][0]))
+            verbose("  ..finished {0}".format(x[0][0][0]))
         return None
 
     def all_frames(self,step_size=1):
@@ -380,7 +380,7 @@ class Timeline(FrameContainer):
         print "saving to {0}".format(self.out_dir())
         to_render = self.save_frame(frame_range)
         for x in to_render:
-            verbose("  ..finished frame {0}".format(x[0][0][0]))
+            verbose("  ..finished {0}".format(x[0][0][0]))
         print "Finished! Frames in {0}".format(self.out_dir())
         return None
 
@@ -393,7 +393,7 @@ class Timeline(FrameContainer):
         frames = self.all_frames(**kwds)
         to_render = self.save_frame(list(frames)) # uses generator instead of list
         for x in to_render:
-            verbose("  ..finished frame {0}".format(x[0][0][0]))
+            verbose("  ..finished {0}".format(x[0][0][0]))
         
         print "Finished with all frames! Frames in {0}".format(self.out_dir())
 
