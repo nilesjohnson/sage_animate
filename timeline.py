@@ -62,7 +62,7 @@ class Segment(FrameContainer):
     `wrap_with_timeline`, or adjust the resulting Timeline object at a
     later time.
     """
-    def __init__(self, name, frame_function, num_frames, param_min=Integer(0), param_max=Integer(1), first_frame=Integer(0)):
+    def __init__(self, name, frame_function, num_frames, param_min=0, param_max=1, first_frame=0):
         FrameContainer.__init__(self)
         self._name = name
         self.frame_function = frame_function
@@ -73,7 +73,7 @@ class Segment(FrameContainer):
 
         # update FrameContainer values
         self.first_frame(first_frame)
-        self.last_frame(first_frame + num_frames - Integer(1))
+        self.last_frame(first_frame + num_frames - 1)
 
     def __repr__(self):
         return "Animation segment: {0};  {1} frames. [{2} -- {3}]".format(self.name(),self.num_frames(),self.first_frame(),self.last_frame())
@@ -107,7 +107,7 @@ class Segment(FrameContainer):
     #     return self(n)
 
     # show or set attributes
-    def frames_generator(self,step_size=Integer(1)):
+    def frames_generator(self,step_size=1):
         """
         Generator for frames in this segment
         """
@@ -170,13 +170,13 @@ class Timeline(FrameContainer):
         self.general_frame_settings['out_dir']=sage.misc.misc.tmp_dir()
         self.general_frame_settings['image_format']='.png'
         self.general_frame_settings['frame_name']='animation-frame'
-        self.general_frame_settings['resolution']=(Integer(544),Integer(306))
+        self.general_frame_settings['resolution']=(544,306)
 
         # attributes of this Timeline;
         # each of the values in this block can be shown or set with a
         # corresponding non-underscore method
         self._segment_class = Segment
-        self._frame_rate = Integer(30) # frames per second
+        self._frame_rate = 30 # frames per second
         self._high_quality = False # in the default configuration, this has no effect
 
         self._segments = tuple()
@@ -227,7 +227,7 @@ class Timeline(FrameContainer):
         leading dot as in '.png', '.jpg', etc.
         """
         if val is not None:
-            if val[Integer(0)] == '.':
+            if val[0] == '.':
                 self.general_frame_settings['image_format'] = val
             else:
                 self.general_frame_settings['image_format'] = '.'+val
@@ -283,9 +283,9 @@ class Timeline(FrameContainer):
         function does not verify that n is one of the frame numbers of
         this animation)
         """
-        d = (n - self.first_frame())/self.frame_rate()
+        d = float(n - self.first_frame())/float(self.frame_rate())
         hms = timedelta(seconds=int(d))
-        return str(hms)+'.%03d'%(Integer(1000)*(d-int(d))) #just show seconds to two decimal places
+        return str(hms)+'.%03d'%(1000*(d-int(d))) #just show seconds to two decimal places
     
     def segment(self,i):
         """
@@ -324,7 +324,7 @@ class Timeline(FrameContainer):
         first_frame = self.next_frame()
         num_frames = S.num_frames()
         S.first_frame(first_frame)
-        S.last_frame(first_frame + num_frames - Integer(1))
+        S.last_frame(first_frame + num_frames - 1)
         
         S._timeline = self
         self._segments += (S,)
@@ -343,7 +343,7 @@ class Timeline(FrameContainer):
                 pass
         raise IndexError('requested frame number not in this timeline')
 
-    def render_segment(self,S,step_size=Integer(1)):
+    def render_segment(self,S,step_size=1):
         """
         Render frames in given segment, or every kth frame where step_size = k.
 
@@ -361,14 +361,14 @@ class Timeline(FrameContainer):
         print "saving to {0}".format(self.out_dir())
         frames = (S(n) for n in frame_numbers) 
         to_render = self.save_frame(frames) # uses generator instead of list
-        i = Integer(0)
+        i = 0
         for x in to_render:
-            i += Integer(1)
-            #verbose("  ..finished frame {0}".format(x[0][0][0]))
-            print("  ..finished frame {0}".format(x[Integer(0)][Integer(0)][Integer(0)])) #verbose broken for more than 15 parallel processes
+            i += 1
+            verbose("  ..finished frame {0}".format(x[0][0][0]))
+            #print("  ..finished frame {0}".format(x[0][0][0])) #verbose broken for more than 15 parallel processes
         return None
 
-    def all_frames(self,step_size=Integer(1)):
+    def all_frames(self,step_size=1):
         """
         generator for all frames in this animation
         """
@@ -380,11 +380,11 @@ class Timeline(FrameContainer):
         """
         Run `self.save_frame` on a list of frame numbers.
         """
-        print "rendering {2} frames {0} -- {1}".format(frame_range[Integer(0)],frame_range[-Integer(1)],len(frame_range))
+        print "rendering {2} frames {0} -- {1}".format(frame_range[0],frame_range[-1],len(frame_range))
         print "saving to {0}".format(self.out_dir())
         to_render = self.save_frame(frame_range)
         for x in to_render:
-            verbose("  ..finished frame {0}".format(x[Integer(0)][Integer(0)][Integer(0)]))
+            verbose("  ..finished frame {0}".format(x[0][0][0]))
         print "Finished! Frames in {0}".format(self.out_dir())
         return None
 
