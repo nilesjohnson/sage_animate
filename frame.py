@@ -14,6 +14,7 @@ AUTHORS: Niles Johnson (2013) <http://www.nilesjohnson.net>
 
 """
 from sage.all_cmdline import *   # import sage library
+from sage.misc.temporary_file import tmp_dir, tmp_filename
 
 from os.path import basename
 
@@ -78,13 +79,13 @@ class Frame(SageObject):
         try:
             return self.settings['file_name']
         except KeyError:
-            return self.file_name(sage.misc.misc.tmp_filename(ext=self.image_format()))
+            return self.file_name(tmp_filename(ext=self.image_format()))
     def reset_file_name(self, image_format='.png'):
         """
         Reset self._file_name to tmp filename using given image format
         extension
         """
-        return self.file_name(sage.misc.misc.tmp_filename(ext=image_format))
+        return self.file_name(tmp_filename(ext=image_format))
 
     def scene(self):
         """
